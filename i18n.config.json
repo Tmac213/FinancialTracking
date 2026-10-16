@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "fallbackLng": "en",
+  "languages": [
+    {"code": "en", "label": "English", "detect": ["en"], "dir": "ltr"},
+    {"code": "zh-CN", "label": "中文（简体）", "detect": ["zh-CN", "zh"], "dir": "ltr"},
+    {"code": "hi", "label": "हिन्दी", "detect": ["hi"], "dir": "ltr"},
+    {"code": "es", "label": "Español", "detect": ["es"], "dir": "ltr"},
+    {"code": "fr", "label": "Français", "detect": ["fr"], "dir": "ltr"},
+    {"code": "ar", "label": "العربية", "detect": ["ar"], "dir": "rtl"},
+    {"code": "bn", "label": "বাংলা", "detect": ["bn"], "dir": "ltr"},
+    {"code": "ru", "label": "Русский", "detect": ["ru"], "dir": "ltr"},
+    {"code": "pt", "label": "Português", "detect": ["pt"], "dir": "ltr"},
+    {"code": "ur", "label": "اردو", "detect": ["ur"], "dir": "rtl"},
+    {"code": "id", "label": "Indonesia", "detect": ["id"], "dir": "ltr"},
+    {"code": "de", "label": "Deutsch", "detect": ["de"], "dir": "ltr"},
+    {"code": "ja", "label": "日本語", "detect": ["ja"], "dir": "ltr"},
+    {"code": "mr", "label": "मराठी", "detect": ["mr"], "dir": "ltr"},
+    {"code": "te", "label": "తెలుగు", "detect": ["te"], "dir": "ltr"},
+    {"code": "tr", "label": "Türkçe", "detect": ["tr"], "dir": "ltr"},
+    {"code": "ta", "label": "தமிழ்", "detect": ["ta"], "dir": "ltr"},
+    {"code": "vi", "label": "Tiếng Việt", "detect": ["vi"], "dir": "ltr"},
+    {"code": "pa", "label": "ਪੰਜਾਬੀ", "detect": ["pa"], "dir": "ltr"},
+    {"code": "ko", "label": "한국어", "detect": ["ko"], "dir": "ltr"}
+  ]
+}

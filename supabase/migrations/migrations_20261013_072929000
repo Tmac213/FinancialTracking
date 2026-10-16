@@ -1,0 +1,1 @@
+delete from auth.users where email in ('ledger-verify-a@enter-verify.invalid', 'ledger-verify-b@enter-verify.invalid');
