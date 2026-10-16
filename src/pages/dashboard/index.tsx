@@ -85,7 +85,7 @@ const DashboardPage = () => {
   if (isError) {
     return (
       <EmptyState
-        icon={<Receipt />}
+        icon={Receipt}
         title={t("dashboard.error.title")}
         description={t("dashboard.error.description")}
       />
@@ -123,7 +123,7 @@ const DashboardPage = () => {
 
       {transactions.length === 0 ? (
         <EmptyState
-          icon={<Receipt />}
+          icon={Receipt}
           title={t("dashboard.empty.title")}
           description={t("dashboard.empty.description")}
         />

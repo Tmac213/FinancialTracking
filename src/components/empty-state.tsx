@@ -21,12 +21,11 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-12 text-center">
       <div className="flex size-20 items-center justify-center rounded-full bg-muted">
-        {typeof icon === "function" ? (
-          /* icon may be a component type */
-          React.createElement(icon as React.ElementType, { className: "size-10 text-muted-foreground" })
-        ) : (
+        {React.isValidElement(icon) ? (
           icon
-        )}
+        ) : typeof icon === "function" || (typeof icon === "object" && icon !== null && "$$typeof" in (icon as any)) ? (
+          React.createElement(icon as React.ElementType, { className: "size-10 text-muted-foreground" })
+        ) : null}
       </div>
       <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
       <p className="max-w-md text-muted-foreground">{description}</p>
