@@ -91,8 +91,13 @@ export const updateFXRate = async (base: string = "USD", target: string, rate: n
 
 
 /**
- * Exchange rate to convert `from` into `to`. Returns `null` when the rate is
- * unknown, so callers can surface that instead of silently using 1.
+ * Exchange rate to convert `from` into `to`.
+ * When snapshot.base is `to` (e.g. USD):
+ *   snapshot.rates[from] represents how many `from` units equal 1 `to` unit (e.g. 1 USD = 49.5 TRY).
+ *   Therefore, 1 unit of `from` equals (1 / snapshot.rates[from]) units of `to` (1 TRY = ~0.0202 USD).
+ * Since the database trigger computes:
+ *   amount_base = amount * exchange_rate,
+ * the stored exchange_rate must be the multiplier: (amount in `from`) * (1 TRY in USD) = amount in USD.
  */
 export const findRate = (
   snapshot: RateSnapshot | undefined,
@@ -103,10 +108,33 @@ export const findRate = (
   const target = to.trim().toUpperCase();
 
   if (source === target) return 1;
-  if (!snapshot || snapshot.base !== target) return null;
+  if (!snapshot) return null;
 
-  const rate = snapshot.rates[source];
-  return typeof rate === "number" && rate > 0 ? rate : null;
+  // Case 1: snapshot base is `to` (e.g. snapshot.base is USD, target is USD, source is TRY)
+  // snapshot.rates[TRY] = 49.5 (meaning 1 USD = 49.5 TRY)
+  // So 1 TRY = 1 / 49.5 USD = 0.0202
+  if (snapshot.base === target) {
+    const rawRate = snapshot.rates[source];
+    return typeof rawRate === "number" && rawRate > 0 ? 1 / rawRate : null;
+  }
+
+  // Case 2: snapshot base is `from` (e.g. snapshot.base is TRY, source is TRY, target is USD)
+  // snapshot.rates[USD] = 0.0202 (meaning 1 TRY = 0.0202 USD)
+  if (snapshot.base === source) {
+    const rawRate = snapshot.rates[target];
+    return typeof rawRate === "number" && rawRate > 0 ? rawRate : null;
+  }
+
+  // Case 3: cross-currency via snapshot.base (e.g. snapshot.base is USD)
+  // 1 source = (1 / snapshot.rates[source]) base
+  // 1 base = snapshot.rates[target] target
+  const fromInBase = snapshot.rates[source];
+  const toInBase = snapshot.rates[target];
+  if (typeof fromInBase === "number" && fromInBase > 0 && typeof toInBase === "number" && toInBase > 0) {
+    return toInBase / fromInBase;
+  }
+
+  return null;
 };
 
 export const convertAmount = (

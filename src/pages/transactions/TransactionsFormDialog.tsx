@@ -155,7 +155,7 @@ const TransactionForm = ({
 
   const basePreview =
     Number.isFinite(amountValue) && rateKnown
-      ? Math.round((amountValue / rate) * 100) / 100
+      ? Math.round(amountValue * rate * 100) / 100
       : null;
 
   return (
