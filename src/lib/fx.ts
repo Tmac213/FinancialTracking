@@ -19,20 +19,7 @@ export const getRates = async (base: string): Promise<RateSnapshot> => {
   if (pending) return pending;
 
   const fetchRates = async (): Promise<RateSnapshot> => {
-    // 1. Try Supabase edge function if deployed
-    try {
-      const { data, error } = await supabase.functions.invoke("fx-rates", {
-        body: { base: key },
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!error && data && !data.error && data.rates && Object.keys(data.rates).length > 0) {
-        return data as RateSnapshot;
-      }
-    } catch {
-      // Edge function failed or not deployed; fallback directly to open.er-api.com
-    }
-
-    // 2. Direct upstream fallback
+    // 1. Fetch live rates directly from open.er-api.com (reliable, free, public CORS API)
     try {
       const res = await fetch(`https://open.er-api.com/v6/latest/${key}`);
       if (res.ok) {
@@ -48,9 +35,20 @@ export const getRates = async (base: string): Promise<RateSnapshot> => {
         }
       }
     } catch {
-      // Network failed
+      // Direct network failed, try fallback
     }
 
+    // 2. Optional Supabase edge function fallback
+    try {
+      const { data, error } = await supabase.functions.invoke("fx-rates", {
+        body: { base: key },
+      });
+      if (!error && data && !data.error && data.rates && Object.keys(data.rates).length > 0) {
+        return data as RateSnapshot;
+      }
+    } catch {
+      // Ignored
+    }
     throw new RatesUnavailableError("exchange rates unavailable");
   };
 

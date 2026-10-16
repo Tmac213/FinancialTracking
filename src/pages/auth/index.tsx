@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BarChart3, Globe2, Loader2, ShieldCheck, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,22 +29,24 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background lg:flex-row">
-      <section className="relative flex flex-col justify-between gap-10 overflow-hidden bg-gradient-primary px-6 py-10 text-primary-foreground lg:w-[46%] lg:px-12 lg:py-14">
+    <div className="flex min-h-screen w-full flex-col bg-background ledger-grid-bg lg:flex-row relative">
+  <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-60 [background-image:radial-gradient(circle_at_20%_20%,hsl(var(--primary-foreground))_0,transparent_45%),radial-gradient(circle_at_80%_70%,hsl(var(--primary-foreground))_0,transparent_40%)]"></div>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-60 full-lightning [background-image:radial-gradient(circle_at_20%_20%,hsl(var(--primary-foreground))_0,transparent_45%),radial-gradient(circle_at_80%_70%,hsl(var(--primary-foreground))_0,transparent_40%)]"></div>
+<section className="relative flex flex-col justify-between gap-10 overflow-hidden flex-1 px-6 py-10 text-foreground lg:px-12 lg:py-14">
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_20%_20%,hsl(var(--primary-foreground))_0,transparent_45%),radial-gradient(circle_at_80%_70%,hsl(var(--primary-foreground))_0,transparent_40%)]"
+          className="pointer-events-none absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_20%_20%,hsl(var(--primary-foreground))_0,transparent_45%),radial-gradient(circle_at_80%_70%,hsl(var(--primary-foreground))_0,transparent_40%)]"
         />
 
-        <div className="relative flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-primary-foreground/15 backdrop-blur">
+        <Link to="/" className="relative flex items-center gap-3 hover:opacity-90 transition-opacity">
+          <span className="flex size-10 items-center justify-center rounded-xl bg-primary-foreground/30 dark:bg-primary-foreground/15 backdrop-blur">
             <Wallet className="size-5" aria-hidden="true" />
           </span>
           <div className="flex flex-col">
             <span className="text-base font-semibold">{t("common.appName")}</span>
             <span className="text-xs opacity-80">{t("common.tagline")}</span>
           </div>
-        </div>
+        </Link>
 
         <div className="relative flex flex-col gap-6">
           <h1 className="max-w-md text-3xl font-semibold leading-tight tracking-tight lg:text-4xl">
@@ -69,7 +71,7 @@ const AuthPage = () => {
         <p className="relative text-xs opacity-75">{t("auth.hero.footnote")}</p>
       </section>
 
-      <section className="ledger-grid-bg flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:py-14">
+      <section className="flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:py-14">
         <div className="w-full max-w-md animate-scale-in">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex flex-col">

@@ -1,3 +1,11 @@
 {
-  "appName": "Financial Tracking"
+  "appName": "Financial Tracking",
+  "nav": {
+    "features": "Features",
+    "analytics": "Analytics",
+    "security": "Security",
+    "faq": "FAQ",
+    "signin": "Sign In",
+    "signup": "Sign Up"
+  }
 }

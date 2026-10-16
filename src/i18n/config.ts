@@ -40,7 +40,7 @@ void i18n
     fallbackLng,
     supportedLngs,
     resources,
-    load: 'languageOnly',
+    load: 'all',
     keySeparator: false,
     nsSeparator: false,
     interpolation: { escapeValue: false },
