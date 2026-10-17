@@ -1,4 +1,5 @@
-import { Navigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Navigate, Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BarChart3, Globe2, Loader2, ShieldCheck, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +16,16 @@ const FEATURES = [
 const AuthPage = () => {
   const { t } = useTranslation();
   const { user, initializing } = useAuth();
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
+  const [activeMode, setActiveMode] = useState<"signin" | "signup">(initialMode);
+
+  useEffect(() => {
+    const modeParam = searchParams.get("mode");
+    if (modeParam === "signup" || modeParam === "signin") {
+      setActiveMode(modeParam);
+    }
+  }, [searchParams]);
 
   if (initializing) {
     return (
@@ -76,7 +87,7 @@ const AuthPage = () => {
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex flex-col">
               <h2 className="text-xl font-semibold tracking-tight">
-                {t("auth.card.title")}
+                {activeMode === "signin" ? t("pages.signin") : t("pages.signup")}
               </h2>
               <p className="text-sm text-muted-foreground">
                 {t("auth.card.subtitle")}
@@ -87,7 +98,7 @@ const AuthPage = () => {
 
           <Card variant="elevated">
             <CardContent className="p-6">
-              <AuthForm />
+              <AuthForm initialMode={activeMode} onModeChange={setActiveMode} />
             </CardContent>
           </Card>
 

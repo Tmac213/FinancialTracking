@@ -12,24 +12,24 @@ import {
 export const LANGUAGE_COUNTRY_CODES: Record<string, string> = {
   en: "us",
   "zh-CN": "cn",
-  hi: "in",
   es: "es",
-  fr: "fr",
   ar: "sa",
-  bn: "bd",
-  ru: "ru",
-  pt: "br",
-  ur: "pk",
-  id: "id",
   de: "de",
+  fr: "fr",
   ja: "jp",
-  mr: "in",
-  te: "in",
-  tr: "tr",
-  ta: "in",
-  vi: "vn",
-  pa: "in",
+  pt: "br",
+  ru: "ru",
+  it: "it",
+  hi: "in",
   ko: "kr",
+  nl: "nl",
+  id: "id",
+  tr: "tr",
+  "zh-TW": "tw",
+  pl: "pl",
+  vi: "vn",
+  sv: "se",
+  th: "th",
 };
 
 type LanguageSwitcherProps = {
@@ -49,7 +49,7 @@ const FlagIcon = ({ langCode, className }: { langCode: string; className?: strin
 };
 
 export const LanguageSwitcher = ({ className }: LanguageSwitcherProps) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const currentLanguage =
     normalizeLanguage(i18n.resolvedLanguage ?? i18n.language) ?? fallbackLng;
@@ -58,7 +58,16 @@ export const LanguageSwitcher = ({ className }: LanguageSwitcherProps) => {
     void i18n.changeLanguage(selected);
   };
 
+  const getLanguageLabel = (value: string, defaultLabel: string) => {
+    const key = `languages.${value}`;
+    const translated = t(key);
+    return translated && translated !== key ? translated : defaultLabel;
+  };
+
   const currentOption = languageOptions.find((opt) => opt.value === currentLanguage);
+  const currentLabel = currentOption
+    ? getLanguageLabel(currentOption.value, currentOption.label)
+    : currentLanguage;
 
   return (
     <Select value={currentLanguage} onValueChange={handleValueChange}>
@@ -71,7 +80,7 @@ export const LanguageSwitcher = ({ className }: LanguageSwitcherProps) => {
         <div className="flex items-center gap-2 truncate">
           <FlagIcon langCode={currentLanguage} />
           <span className="truncate">
-            {currentOption ? currentOption.label : currentLanguage}
+            {currentLabel}
           </span>
         </div>
       </SelectTrigger>
@@ -84,7 +93,9 @@ export const LanguageSwitcher = ({ className }: LanguageSwitcherProps) => {
           >
             <div className="flex items-center gap-2.5">
               <FlagIcon langCode={language.value} />
-              <span className="font-medium">{language.label}</span>
+              <span className="font-medium">
+                {getLanguageLabel(language.value, language.label)}
+              </span>
             </div>
           </SelectItem>
         ))}

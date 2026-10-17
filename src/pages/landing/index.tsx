@@ -139,10 +139,10 @@ export const LandingPage = () => {
             ) : (
               <>
                 <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex text-muted-foreground hover:text-foreground">
-                  <Link to="/auth">{t("auth.tabs.signin")}</Link>
+                  <Link to="/auth?mode=signin">{t("auth.tabs.signin")}</Link>
                 </Button>
                 <Button asChild size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-elegant font-medium">
-                  <Link to="/auth">
+                  <Link to="/auth?mode=signup">
                     {t("auth.tabs.signup")}
                     <ArrowRight className="ms-1.5 size-4" />
                   </Link>

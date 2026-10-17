@@ -33,12 +33,71 @@ export const DEFAULT_CURRENCY = "USD";
 export const isCurrencyCode = (value: string): boolean =>
   CODE_SET.has(value.trim().toUpperCase());
 
-/** BCP-47 locale used for number formatting, derived from the active UI language. */
+/** BCP-47 locale used for number and currency formatting with native numbering systems */
 export const localeFromLanguage = (language: string): string => {
   if (!language) return "en-US";
-  if (language.startsWith("zh")) return "zh-CN";
-  if (language.startsWith("en")) return "en-US";
-  return language;
+  const lang = language.trim().toLowerCase();
+
+  switch (lang) {
+    case "ar":
+      return "ar-u-nu-arab"; // Arabic-Indic digits (٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩)
+    case "hi":
+      return "hi-u-nu-deva"; // Devanagari digits (० १ २ ३ ४ ५ ६ ७ ८ ९)
+    case "th":
+      return "th-u-nu-thai"; // Thai numerals (๐ ๑ ๒ ๓ ๔ ๕ ๖ ๗ ๘ ๙)
+    case "zh-cn":
+    case "zh":
+      return "zh-CN";
+    case "zh-tw":
+    case "zh-hk":
+    case "zh-hant":
+      return "zh-TW";
+    case "es":
+      return "es-ES";
+    case "fr":
+      return "fr-FR";
+    case "de":
+      return "de-DE";
+    case "it":
+      return "it-IT";
+    case "ja":
+      return "ja-JP";
+    case "ko":
+      return "ko-KR";
+    case "ru":
+      return "ru-RU";
+    case "pt":
+      return "pt-BR";
+    case "nl":
+      return "nl-NL";
+    case "tr":
+      return "tr-TR";
+    case "id":
+    case "ms":
+      return "id-ID";
+    case "pl":
+      return "pl-PL";
+    case "vi":
+      return "vi-VN";
+    case "sv":
+      return "sv-SE";
+    case "en":
+    default:
+      return "en-US";
+  }
+};
+
+/** Format general numbers using the active locale's native numbering system */
+export const formatNumber = (
+  value: number,
+  locale = "en-US",
+  options: Intl.NumberFormatOptions = {},
+): string => {
+  try {
+    return new Intl.NumberFormat(locale, options).format(value);
+  } catch {
+    return String(value);
+  }
 };
 
 const symbolCache = new Map<string, string>();

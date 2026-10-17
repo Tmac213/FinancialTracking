@@ -30,13 +30,18 @@ const errorKeyFor = (message: string): string => {
   return "auth.error.generic";
 };
 
-export const AuthForm = () => {
+type AuthFormProps = {
+  initialMode?: Mode;
+  onModeChange?: (mode: Mode) => void;
+};
+
+export const AuthForm = ({ initialMode = "signin", onModeChange }: AuthFormProps) => {
   const { t } = useTranslation();
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [mode, setMode] = useState<Mode>("signin");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -50,6 +55,7 @@ export const AuthForm = () => {
 
   const switchMode = (next: Mode) => {
     setMode(next);
+    onModeChange?.(next);
     setFormError(null);
     setConfirmationSent(false);
   };

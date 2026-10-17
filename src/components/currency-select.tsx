@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { CurrencyFlag } from "@/components/currency-flag";
 import {
   getCurrencyName,
   getCurrencySymbol,
@@ -65,6 +66,7 @@ export const CurrencySelect = ({
           )}
         >
           <span className="flex min-w-0 items-center gap-2">
+            <CurrencyFlag currency={value} />
             <span className="numeric font-semibold">
               {getCurrencySymbol(value, locale)}
             </span>
@@ -97,12 +99,13 @@ export const CurrencySelect = ({
                   setQuery("");
                   setOpen(false);
                 }}
-                className="flex items-center gap-3"
+                className="flex items-center gap-2.5"
               >
-                <span className="numeric w-8 text-sm font-semibold text-muted-foreground">
+                <CurrencyFlag currency={option.code} />
+                <span className="numeric w-7 text-xs font-semibold text-muted-foreground">
                   {option.symbol}
                 </span>
-                <span className="font-medium">{option.code}</span>
+                <span className="font-medium text-xs">{option.code}</span>
                 <span className="truncate text-xs text-muted-foreground">
                   {option.name}
                 </span>

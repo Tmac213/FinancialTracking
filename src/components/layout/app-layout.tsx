@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/use-profile";
 import React from "react";
 import { getLanguageDirection } from "@/i18n/util";
 import {
+  Banknote,
   LayoutDashboard,
   LogOut,
   Receipt,
@@ -35,8 +36,6 @@ import {
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-
-
 type NavItem = {
   to: string;
   labelKey: string;
@@ -46,6 +45,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { to: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { to: "/transactions", labelKey: "nav.transactions", icon: Receipt },
+  { to: "/money-tracker", labelKey: "nav.moneyTracker", icon: Banknote },
   { to: "/categories", labelKey: "nav.categories", icon: Tags },
   { to: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
