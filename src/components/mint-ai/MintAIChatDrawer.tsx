@@ -52,7 +52,7 @@ type MintAIChatDrawerProps = {
 };
 
 export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { baseCurrency } = useProfile();
   const { transactions } = useTransactions();
   const { categories } = useCategories();
