@@ -244,10 +244,67 @@ export const categoryBreakdown = (
 export const byCategoryId = (categories: CategoryRow[]) =>
   new Map(categories.map((category) => [category.id, category]));
 
-/** Percent change between two totals; `null` when there is no baseline. */
 export const percentChange = (current: number, previous: number): number | null => {
   if (!previous) return null;
   return Math.round(((current - previous) / Math.abs(previous)) * 1000) / 10;
 };
 
 export const todayISOForInput = todayISO;
+
+/** Daily average spending and month-end projection calculations. */
+export type SpendingVelocity = {
+  dailyAverage: number;
+  projectedMonthEnd: number;
+  daysPassed: number;
+  daysTotal: number;
+};
+
+export const calculateSpendingVelocity = (
+  rows: TransactionRow[],
+  period: PeriodKey,
+  now = new Date(),
+): SpendingVelocity => {
+  let daysPassed = 1;
+  let daysTotal = 30;
+
+  if (period === "this_month") {
+    daysPassed = Math.max(1, now.getDate());
+    daysTotal = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  } else if (period === "last_month") {
+    const lastMonthDate = new Date(now.getFullYear(), now.getMonth(), 0);
+    daysPassed = lastMonthDate.getDate();
+    daysTotal = lastMonthDate.getDate();
+  } else if (period === "last_3_months") {
+    daysPassed = 90;
+    daysTotal = 90;
+  } else if (period === "this_year") {
+    const start = new Date(now.getFullYear(), 0, 1);
+    const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    daysPassed = Math.max(1, diff + 1);
+    daysTotal = 365;
+  } else {
+    // all_time or other: use distinct days in dataset or fallback
+    const dates = new Set(rows.map((r) => r.occurred_on));
+    daysPassed = Math.max(1, dates.size);
+    daysTotal = daysPassed;
+  }
+
+  let totalExpense = 0;
+  for (const row of rows) {
+    if (row.type === "expense") {
+      totalExpense += Number(row.amount_base) || 0;
+    }
+  }
+
+  const dailyAverage = round2(totalExpense / daysPassed);
+  // For this_month, projected month end is current expenses + dailyAverage * (daysTotal - daysPassed)
+  const remainingDays = Math.max(0, daysTotal - daysPassed);
+  const projectedMonthEnd = round2(totalExpense + dailyAverage * remainingDays);
+
+  return {
+    dailyAverage,
+    projectedMonthEnd,
+    daysPassed,
+    daysTotal,
+  };
+};

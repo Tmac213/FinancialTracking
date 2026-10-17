@@ -11,6 +11,7 @@ import {
   LogOut,
   Receipt,
   Settings,
+  Sparkles,
   Tags,
   Wallet,
   type LucideIcon,
@@ -35,6 +36,8 @@ import {
 } from "@/components/ui/sidebar";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { GlobalQuickAddFAB } from "@/components/global-quick-add-fab";
+import { MintAIChatDrawer } from "@/components/mint-ai/MintAIChatDrawer";
 
 type NavItem = {
   to: string;
@@ -45,7 +48,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { to: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { to: "/transactions", labelKey: "nav.transactions", icon: Receipt },
-  { to: "/money-tracker", labelKey: "nav.moneyTracker", icon: Banknote },
+  { to: "/money-tracker", labelKey: "nav.moneyTracker", icon: Wallet },
   { to: "/categories", labelKey: "nav.categories", icon: Tags },
   { to: "/settings", labelKey: "nav.settings", icon: Settings },
 ];
@@ -61,6 +64,7 @@ export const AppLayout = () => {
   const { baseCurrency } = useProfile();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [mintAiOpen, setMintAiOpen] = React.useState(false);
   const activeItem = NAV_ITEMS.find(item => pathname.startsWith(item.to)) ?? NAV_ITEMS[0];
 
   return (
@@ -172,6 +176,15 @@ export const AppLayout = () => {
               </span>
             </div>
             <div className="ms-auto flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMintAiOpen(true)}
+                className="group relative flex items-center gap-1.5 rounded-full border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary px-3 h-8 shadow-sm transition-all"
+              >
+                <Sparkles className="size-3.5 animate-pulse text-primary" />
+                <span className="text-xs font-semibold">Mint AI</span>
+              </Button>
               <Badge variant="glow" className="hidden numeric sm:inline-flex">
                 {baseCurrency}
               </Badge>
@@ -183,6 +196,8 @@ export const AppLayout = () => {
           <main className="flex-1 px-4 py-6 md:px-6 md:py-8">
             <Outlet />
           </main>
+          <GlobalQuickAddFAB onOpenMintAi={() => setMintAiOpen(true)} />
+          <MintAIChatDrawer open={mintAiOpen} onOpenChange={setMintAiOpen} />
         </SidebarInset>
       </SidebarProvider>
     </div>

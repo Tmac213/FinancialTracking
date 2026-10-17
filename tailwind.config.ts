@@ -36,6 +36,17 @@ const tailwindConfig = {
         'expense-foreground': 'hsl(var(--expense-foreground))',
         ring: 'hsl(var(--ring))',
       },
+      backgroundImage: {
+        'gradient-primary': 'var(--gradient-primary)',
+        'gradient-surface': 'var(--gradient-surface)',
+        'gradient-income': 'var(--gradient-income)',
+        'gradient-expense': 'var(--gradient-expense)',
+      },
+      boxShadow: {
+        elegant: 'var(--shadow-elegant)',
+        card: 'var(--shadow-card)',
+        glow: 'var(--shadow-glow)',
+      },
     },
   },
   plugins: [],

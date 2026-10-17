@@ -1,16 +1,29 @@
 import { useTranslation } from "react-i18next";
-import { PiggyBank, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import {
+  CalendarDays,
+  Compass,
+  PiggyBank,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 import { StatCard } from "@/components/stat-card";
-import { percentChange, type Totals } from "@/lib/finance";
+import { percentChange, type SpendingVelocity, type Totals } from "@/lib/finance";
 import { localeFromLanguage } from "@/lib/currencies";
 
 type SummaryCardsProps = {
   current: Totals;
   previous: Totals;
+  velocity: SpendingVelocity;
   currency: string;
 };
 
-export const SummaryCards = ({ current, previous, currency }: SummaryCardsProps) => {
+export const SummaryCards = ({
+  current,
+  previous,
+  velocity,
+  currency,
+}: SummaryCardsProps) => {
   const { t, i18n } = useTranslation();
   const locale = localeFromLanguage(i18n.resolvedLanguage ?? i18n.language);
 
@@ -20,7 +33,7 @@ export const SummaryCards = ({ current, previous, currency }: SummaryCardsProps)
   const hint = t("dashboard.vsPrevious", { period: previousLabel });
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       <StatCard
         label={t("dashboard.income")}
         amount={current.income}
@@ -40,7 +53,7 @@ export const SummaryCards = ({ current, previous, currency }: SummaryCardsProps)
         delta={percentChange(current.expense, previous.expense)}
         positiveIsGood={false}
         hint={hint}
-        style={{ animationDelay: "60ms" }}
+        style={{ animationDelay: "50ms" }}
       />
       <StatCard
         label={t("dashboard.net")}
@@ -50,14 +63,14 @@ export const SummaryCards = ({ current, previous, currency }: SummaryCardsProps)
         tone={current.net >= 0 ? "income" : "expense"}
         delta={percentChange(current.net, previous.net)}
         hint={hint}
-        style={{ animationDelay: "120ms" }}
+        style={{ animationDelay: "100ms" }}
       />
       <StatCard
         label={t("dashboard.savingsRate")}
         icon={PiggyBank}
         tone={current.savingsRate >= 0 ? "default" : "expense"}
         hint={t("dashboard.savingsHint")}
-        style={{ animationDelay: "180ms" }}
+        style={{ animationDelay: "150ms" }}
         value={
           <span
             className={
@@ -69,6 +82,28 @@ export const SummaryCards = ({ current, previous, currency }: SummaryCardsProps)
             {current.savingsRate}%
           </span>
         }
+      />
+      <StatCard
+        label={t("dashboard.velocity.dailyAverage")}
+        amount={velocity.dailyAverage}
+        currency={currency}
+        icon={CalendarDays}
+        tone="default"
+        hint={t("dashboard.velocity.dailyHint", { days: velocity.daysPassed })}
+        style={{ animationDelay: "200ms" }}
+      />
+      <StatCard
+        label={t("dashboard.velocity.projectedMonthEnd")}
+        amount={velocity.projectedMonthEnd}
+        currency={currency}
+        icon={Compass}
+        tone={
+          current.income > 0 && velocity.projectedMonthEnd > current.income
+            ? "expense"
+            : "default"
+        }
+        hint={t("dashboard.velocity.projectedHint")}
+        style={{ animationDelay: "250ms" }}
       />
     </div>
   );

@@ -1,6 +1,14 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, Plus, Receipt, SearchX } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Loader2, Plus, Receipt, SearchX } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { exportTransactionsToCSV, printFinancialSummaryPDF } from "@/lib/reports";
+import { localeFromLanguage } from "@/lib/currencies";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,7 +38,7 @@ import { TransactionTable } from "./TransactionTable";
 import { useTransactionFilters } from "./useTransactionFilters";
 
 const TransactionsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { baseCurrency } = useProfile();
   const { categories } = useCategories();
   const { transactions, isLoading, isError } = useTransactions();
@@ -80,10 +88,47 @@ const TransactionsPage = () => {
             {t("transactions.subtitle", { base: baseCurrency })}
           </p>
         </div>
-        <Button variant="hero" onClick={openCreate}>
-          <Plus className="size-4" aria-hidden="true" />
-          {t("transactions.add")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 text-xs">
+                <Download className="size-3.5" />
+                {t("reports.exportReport")}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => exportTransactionsToCSV(filtered, categories, baseCurrency)}
+                className="gap-2 cursor-pointer text-xs"
+              >
+                <FileSpreadsheet className="size-4 text-emerald-600" />
+                <span>{t("reports.exportCSV")}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  const locale = localeFromLanguage(i18n.resolvedLanguage ?? i18n.language);
+                  printFinancialSummaryPDF(
+                    totals,
+                    filtered,
+                    categories,
+                    baseCurrency,
+                    t("reports.currentFilteredPeriod"),
+                    locale,
+                  );
+                }}
+                className="gap-2 cursor-pointer text-xs"
+              >
+                <FileText className="size-4 text-primary" />
+                <span>{t("reports.exportPDF")}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button variant="hero" onClick={openCreate}>
+            <Plus className="size-4" aria-hidden="true" />
+            {t("transactions.add")}
+          </Button>
+        </div>
       </div>
 
       <TransactionFilters
