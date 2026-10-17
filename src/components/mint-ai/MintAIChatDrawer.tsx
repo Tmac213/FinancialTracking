@@ -77,18 +77,34 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
   const recognitionRef = useRef<any>(null);
   const currentLang = i18n.language ?? i18n.resolvedLanguage ?? "en";
 
+  const getWelcomeText = () => {
+    const val = t("mintAi.welcome");
+    return val && val.trim() ? val : "👋 Hi! I'm **Mint AI**, your intelligent financial co-pilot.\n\nYou can log transactions in your language or ask me anything about your spending, budget alerts, and goals!";
+  };
+
+  const getSuggestions = () => {
+    const s1 = t("mintAi.suggestion1");
+    const s2 = t("mintAi.suggestion2");
+    const s3 = t("mintAi.suggestion3");
+    const s4 = t("mintAi.suggestion4");
+    const list = [s1, s2, s3, s4].filter((s) => Boolean(s && s.trim()));
+    return list.length > 0
+      ? list
+      : [
+          "Spent $15 on lunch using Cash Wallet",
+          "How much did I spend on Food this month?",
+          "Compare spending with last month",
+          "Financial health summary",
+        ];
+  };
+
   const [messages, setMessages] = useState<MintAIMessage[]>(() => [
     {
       id: "welcome",
       sender: "assistant",
-      text: t("mintAi.welcome"),
+      text: getWelcomeText(),
       timestamp: new Date().toISOString(),
-      suggestions: [
-        t("mintAi.suggestion1"),
-        t("mintAi.suggestion2"),
-        t("mintAi.suggestion3"),
-        t("mintAi.suggestion4"),
-      ],
+      suggestions: getSuggestions(),
     },
   ]);
 
@@ -100,14 +116,9 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
           {
             id: "welcome",
             sender: "assistant",
-            text: t("mintAi.welcome"),
+            text: getWelcomeText(),
             timestamp: new Date().toISOString(),
-            suggestions: [
-              t("mintAi.suggestion1"),
-              t("mintAi.suggestion2"),
-              t("mintAi.suggestion3"),
-              t("mintAi.suggestion4"),
-            ],
+            suggestions: getSuggestions(),
           },
         ];
       }
