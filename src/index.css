@@ -152,6 +152,33 @@ html {
 
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Language-specific font adjustments for perfect visual balance with English */
+  [lang^="zh"], [lang="zh-CN"], [lang="zh-TW"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans SC', 'Noto Sans TC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  }
+
+  [lang="ar"], [dir="rtl"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  }
+
+  [lang="ja"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+  }
+
+  [lang="ko"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+
+  [lang="th"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Thai', 'Thonburi', sans-serif;
+  }
+
+  [lang="hi"] {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
   }
 
   /* Every figure in the app lines up: amounts, dates, deltas. */

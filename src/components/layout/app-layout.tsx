@@ -55,11 +55,13 @@ const NAV_ITEMS: NavItem[] = [
 
 export const AppLayout = () => {
   const { t, i18n } = useTranslation();
-  const pageDir = getLanguageDirection(i18n.language ?? i18n.resolvedLanguage);
-  // Ensure the HTML document direction matches the selected language
+  const currentLang = i18n.language ?? i18n.resolvedLanguage ?? "en";
+  const pageDir = getLanguageDirection(currentLang);
+  // Ensure the HTML document direction and lang attribute match the selected language
   React.useEffect(() => {
     document.documentElement.dir = pageDir;
-  }, [pageDir]);
+    document.documentElement.lang = currentLang;
+  }, [pageDir, currentLang]);
   const { user, signOut } = useAuth();
   const { baseCurrency } = useProfile();
   const navigate = useNavigate();
