@@ -75,21 +75,45 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
   const [input, setInput] = useState("");
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
+  const currentLang = i18n.language ?? i18n.resolvedLanguage ?? "en";
 
   const [messages, setMessages] = useState<MintAIMessage[]>(() => [
     {
       id: "welcome",
       sender: "assistant",
-      text: "👋 Hi! I'm **Mint AI**, your intelligent financial co-pilot.\n\nYou can log transactions in plain English or Arabic (e.g., *'Spent $15 on lunch at McDonald\\'s using Cash Wallet'*), or ask me anything about your spending, budget alerts, and goals!",
+      text: t("mintAi.welcome"),
       timestamp: new Date().toISOString(),
       suggestions: [
-        "Spent $15 on lunch at McDonald's using Cash Wallet",
-        "How much did I spend on Food this month?",
-        "Compare spending with last month",
-        "Financial health summary",
+        t("mintAi.suggestion1"),
+        t("mintAi.suggestion2"),
+        t("mintAi.suggestion3"),
+        t("mintAi.suggestion4"),
       ],
     },
   ]);
+
+  // When language changes, update the initial welcome message if no user conversation started
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0].id === "welcome") {
+        return [
+          {
+            id: "welcome",
+            sender: "assistant",
+            text: t("mintAi.welcome"),
+            timestamp: new Date().toISOString(),
+            suggestions: [
+              t("mintAi.suggestion1"),
+              t("mintAi.suggestion2"),
+              t("mintAi.suggestion3"),
+              t("mintAi.suggestion4"),
+            ],
+          },
+        ];
+      }
+      return prev;
+    });
+  }, [currentLang, t]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -99,7 +123,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
     }
   }, [messages]);
 
-  // Voice recognition setup if supported
+  // Voice recognition setup matching current language
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -108,6 +132,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
+        recognition.lang = currentLang;
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setInput(transcript);
@@ -118,7 +143,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
         recognitionRef.current = recognition;
       }
     }
-  }, []);
+  }, [currentLang]);
 
   const toggleListening = () => {
     if (!recognitionRef.current) {
@@ -174,7 +199,8 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
         recurring,
         goals,
         budgets,
-        baseCurrency
+        baseCurrency,
+        currentLang
       );
       setMessages((prev) => [
         ...prev,
@@ -201,7 +227,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
       const botMsg: MintAIMessage = {
         id: "bot_" + Date.now().toString(36),
         sender: "assistant",
-        text: `I've prepared this **${parsed.type.toUpperCase()}** entry for you. Review the details below and click **Confirm & Log** to record it immediately:`,
+        text: t("mintAi.preparedEntry", { type: parsed.type.toUpperCase() }),
         timestamp: new Date().toISOString(),
         parsedTransaction: parsed,
         actionTaken: "pending",
@@ -217,7 +243,8 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
         recurring,
         goals,
         budgets,
-        baseCurrency
+        baseCurrency,
+        currentLang
       );
       setMessages((prev) => [
         ...prev,
@@ -291,13 +318,13 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
             </div>
             <div className="flex-1 text-left rtl:text-right">
               <SheetTitle className="text-lg font-bold flex items-center gap-2">
-                Mint AI
+                {t("mintAi.title")}
                 <Badge variant="glow" className="text-[10px] uppercase font-semibold">
-                  Assistant
+                  AI
                 </Badge>
               </SheetTitle>
               <SheetDescription className="text-xs text-muted-foreground">
-                Natural language logger, budget insights & financial advice
+                {t("mintAi.subtitle")}
               </SheetDescription>
             </div>
           </div>
@@ -338,7 +365,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
                     <div className="rounded-xl border border-border bg-card p-3.5 shadow-md space-y-3">
                       <div className="flex items-center justify-between border-b border-border/50 pb-2">
                         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          Parsed Transaction
+                          {t("mintAi.parsedTitle")}
                         </span>
                         <Badge
                           variant={m.parsedTransaction.type === "income" ? "glow" : "outline"}
@@ -351,7 +378,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <TrendingUp className="size-3.5" />
-                          <span>Amount:</span>
+                          <span>{t("transactions.amount")}:</span>
                         </div>
                         <span className="font-bold text-foreground numeric text-right rtl:text-left">
                           {m.parsedTransaction.amount.toFixed(2)} {m.parsedTransaction.currency}
@@ -359,17 +386,17 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
 
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Tag className="size-3.5" />
-                          <span>Category:</span>
+                          <span>{t("transactions.category")}:</span>
                         </div>
                         <span className="font-medium text-foreground text-right rtl:text-left">
-                          {m.parsedTransaction.categoryName || "Uncategorized"}
+                          {m.parsedTransaction.categoryName || t("categories.uncategorized")}
                         </span>
 
                         {m.parsedTransaction.walletName && (
                           <>
                             <div className="flex items-center gap-1.5 text-muted-foreground">
                               <Wallet className="size-3.5" />
-                              <span>Wallet:</span>
+                              <span>{t("nav.moneyTracker")}:</span>
                             </div>
                             <span className="font-medium text-foreground text-right rtl:text-left">
                               {m.parsedTransaction.walletName}
@@ -379,7 +406,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
 
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Calendar className="size-3.5" />
-                          <span>Description:</span>
+                          <span>{t("transactions.description")}:</span>
                         </div>
                         <span className="font-medium text-foreground truncate text-right rtl:text-left">
                           {m.parsedTransaction.description}
@@ -395,7 +422,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
                             disabled={createTransaction.isPending}
                           >
                             <CheckCircle2 className="size-4" />
-                            Confirm & Log
+                            {t("mintAi.confirmLog")}
                           </Button>
                           <Button
                             size="sm"
@@ -403,7 +430,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
                             onClick={() => handleCancelIntent(m.id)}
                             disabled={createTransaction.isPending}
                           >
-                            Cancel
+                            {t("mintAi.cancel")}
                           </Button>
                         </div>
                       )}
@@ -411,13 +438,13 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
                       {m.actionTaken === "created" && (
                         <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
                           <CheckCircle2 className="size-4" />
-                          Successfully logged to your ledger & wallet!
+                          {t("mintAi.loggedSuccess")}
                         </div>
                       )}
 
                       {m.actionTaken === "cancelled" && (
                         <div className="text-xs text-muted-foreground italic">
-                          Transaction entry cancelled.
+                          {t("mintAi.cancel")}
                         </div>
                       )}
                     </div>
@@ -472,7 +499,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="E.g. Spent $25 on groceries using Cash..."
+              placeholder={t("mintAi.placeholder")}
               className="h-10 flex-1 rounded-full px-4 text-sm focus-visible:ring-1"
             />
 
@@ -486,7 +513,7 @@ export const MintAIChatDrawer = ({ open, onOpenChange }: MintAIChatDrawerProps) 
             </Button>
           </form>
           <div className="mt-2 text-center text-[10px] text-muted-foreground">
-            Mint AI parses amounts, categories & wallets in real time.
+            {t("mintAi.footerHint")}
           </div>
         </div>
       </SheetContent>
