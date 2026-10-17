@@ -186,6 +186,26 @@ html {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
+
+  /* Scale down number sizes gracefully in all non-English languages to fit cards and grids perfectly */
+  html:not([lang="en"]) .numeric {
+    font-size: 0.90em;
+    letter-spacing: -0.025em;
+    word-break: break-word;
+  }
+
+  html:not([lang="en"]) .text-2xl.numeric,
+  html:not([lang="en"]) .text-3xl.numeric {
+    font-size: 1.45rem;
+    line-height: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    html:not([lang="en"]) .md\:text-3xl.numeric {
+      font-size: 1.65rem;
+      line-height: 2rem;
+    }
+  }
 }
 
 @layer components {
